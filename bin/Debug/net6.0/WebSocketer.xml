@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>WebSocketer</name></assembly>
+<members>
+<member name="M:WebSocketer.Type.Socket.recvBytes(System.Net.Sockets.Socket,System.Int32)">
+<summary>
+ 接收指定长度字节消息
+</summary>
+</member>
+<member name="M:WebSocketer.Type.Socket.recvBytes(System.Net.Sockets.Socket)">
+<summary>
+ 接收全部字节消息
+</summary>
+</member>
+<member name="M:WebSocketer.Type.Socket.recv(System.Net.Sockets.Socket)">
+<summary>
+ 接收文本消息
+</summary>
+</member>
+<member name="M:WebSocketer.Type.Socket.get_sendBytes(System.Net.Sockets.Socket)">
+<summary>
+ 发送字节消息
+</summary>
+</member>
+<member name="M:WebSocketer.Type.Socket.get_send(System.Net.Sockets.Socket)">
+<summary>
+ 发送文本消息
+</summary>
+</member>
+<member name="M:WebSocketer.Server.listen(System.UInt16,Microsoft.FSharp.Core.FSharpFunc{WebSocketer.Type.WebSocket,Microsoft.FSharp.Core.Unit})">
+<summary>
+ 持续监听本机指定端口的tcp连接
+ 闭包 f 生命期结束后其连接会被自动销毁
+ 此函数会永久性阻塞当前线程
+</summary>
+</member>
+</members>
+</doc>

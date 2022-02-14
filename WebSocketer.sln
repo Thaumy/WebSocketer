@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSocketer", "WebSocketer.fsproj", "{33232E24-8484-41CA-A9C2-A2E3001F7BAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33232E24-8484-41CA-A9C2-A2E3001F7BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33232E24-8484-41CA-A9C2-A2E3001F7BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33232E24-8484-41CA-A9C2-A2E3001F7BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33232E24-8484-41CA-A9C2-A2E3001F7BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
