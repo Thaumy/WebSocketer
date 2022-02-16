@@ -50,6 +50,7 @@ type Socket with
         fetch (Array.zeroCreate<byte> n) 0 n
 
 type WebSocket internal (socket: Socket) =
+    //对于使用其他API，暴露内部socket可能会有用
     member self.socket = socket
 
     member self.send(msg: string) =

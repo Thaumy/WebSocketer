@@ -8,6 +8,7 @@ open System.Threading
 /// 持续监听本机指定端口的tcp连接
 /// 闭包 f 生命期结束后其连接会被自动销毁
 /// 此函数会永久性阻塞当前线程
+/// 该函的返回值始终为Error
 let listen (port: uint16) f =
     let listenSocket =
         new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
@@ -21,27 +22,9 @@ let listen (port: uint16) f =
         while true do //持续阻塞当前线程
             let socket = listenSocket.Accept()
 
-            let sendHeartBeat =
-                async {
-                    let isConnected () =
-                        (socket.Available = 0
-                         && socket.Poll(1000, SelectMode.SelectRead))
-                        |> not
-
-                    while isConnected () do
-                        Thread.Sleep(1000)
-
-                        Console.Write "."
-
-                    Console.Write "!"
-                }
-
-
             async {
                 try
                     let requestText: string = socket.recvText ()
-
-
 
                     if requestText.StartsWith("GET") then
 
@@ -55,13 +38,28 @@ let listen (port: uint16) f =
 
                         socket |> WebSocket |> f
                 with
-                | e -> e.ToString() |> Console.WriteLine
+                | e ->
+                    e.Message |> Console.WriteLine
+                    socket.Dispose()
+
             }
             |> Async.Start
 
-            sendHeartBeat |> Async.RunSynchronously
+            //监听连接状态，在断开时解除阻塞并开始新一轮监听
+            async {
+                let timeout = 500 //超时时间
+                let span = 3000 //轮询间隔
 
-            socket.Dispose()
+                let disConnected () =
+                    socket.Available = 0
+                    && socket.Poll(timeout, SelectMode.SelectRead)
+
+                while not <| disConnected () do
+                    Thread.Sleep span
+
+                socket.Close()
+            }
+            |> Async.RunSynchronously
 
         Ok()
     with
