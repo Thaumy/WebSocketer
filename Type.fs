@@ -8,13 +8,13 @@ open System.Net.Sockets
 type Socket with
 
     /// 发送文本消息
-    member self.send: string -> unit =
+    member self.sendText: string -> unit =
         Encoding.UTF8.GetBytes >> self.Send >> ignore
     /// 发送字节消息
     member self.sendBytes: byte [] -> unit = self.Send >> ignore
 
     /// 接收文本消息
-    member self.recv() =
+    member self.recvText() =
         let buf = Array.zeroCreate<byte> 4096
 
         let rec fetch (sb: StringBuilder) =
@@ -50,6 +50,8 @@ type Socket with
         fetch (Array.zeroCreate<byte> n) 0 n
 
 type WebSocket internal (socket: Socket) =
+    member self.socket = socket
+
     member self.send(msg: string) =
         let msgBytes = Encoding.UTF8.GetBytes msg
         let actualPayLoadLen = msgBytes.Length

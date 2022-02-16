@@ -12,7 +12,7 @@
  接收全部字节消息
 </summary>
 </member>
-<member name="M:WebSocketer.Type.Socket.recv(System.Net.Sockets.Socket)">
+<member name="M:WebSocketer.Type.Socket.recvText(System.Net.Sockets.Socket)">
 <summary>
  接收文本消息
 </summary>
@@ -22,7 +22,7 @@
  发送字节消息
 </summary>
 </member>
-<member name="M:WebSocketer.Type.Socket.get_send(System.Net.Sockets.Socket)">
+<member name="M:WebSocketer.Type.Socket.get_sendText(System.Net.Sockets.Socket)">
 <summary>
  发送文本消息
 </summary>
