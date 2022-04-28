@@ -5,6 +5,8 @@ open System.Net
 open System.Net.Sockets
 open System.Threading
 open System.Threading.Channels
+open WebSocketer.Type.Socket
+open WebSocketer.Type.WebSocket
 
 /// 持续监听本机指定端口的tcp连接
 /// 闭包 f 生命期结束后其连接会被自动销毁
@@ -25,9 +27,12 @@ let listen (port: uint16) f =
 
             async {
                 try
-                    let requestText: string = socket.recvText ()
+                    let requestText = socket.recvAllUtf8 ()
 
-                    if requestText.StartsWith("GET") then
+                    if
+                        requestText.StartsWith("GET")
+                        && requestText.Contains("Upgrade: websocket")
+                    then
 
                         let response =
                             requestText
@@ -35,7 +40,7 @@ let listen (port: uint16) f =
                             |> genSecWebSocketAccept
                             |> genResponse
 
-                        socket.sendText response
+                        socket.sendUtf8 response
 
                         socket |> WebSocket |> f
                 with
@@ -100,7 +105,7 @@ let listenWithTimeout (port: uint16) f (timeout: int) =
 
                 async {
                     try
-                        let requestText: string = socket.recvText ()
+                        let requestText: string = socket.recvAllUtf8 ()
 
                         if requestText.StartsWith("GET") then
 
@@ -110,7 +115,7 @@ let listenWithTimeout (port: uint16) f (timeout: int) =
                                 |> genSecWebSocketAccept
                                 |> genResponse
 
-                            socket.sendText response
+                            socket.sendUtf8 response
 
                             socket |> WebSocket |> f
                     with

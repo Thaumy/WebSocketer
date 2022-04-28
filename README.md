@@ -1,4 +1,4 @@
-# WebsSocketer
+# WebSocketer
 
 A simple websocket server for dotnet.
 
