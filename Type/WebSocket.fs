@@ -3,14 +3,45 @@ module WebSocketer.Type.WebSocket
 
 open System
 open System.IO
+open System.Net
 open System.Net.Sockets
-open fsharper.types.List
 open fsharper.types.Procedure
 open WebSocketer
+open WebSocketer.Parser
 open WebSocketer.Type.Socket
 
 
 type WebSocket internal (socket: Socket) =
+    /// RAII构造
+    new(port: uint16) =
+        let listenSocket =
+            new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+
+        let ep = IPEndPoint(IPAddress.Any, int port)
+
+        listenSocket.Bind ep
+        listenSocket.Listen 1024
+
+        let rec fetchSocket () =
+            let socket = listenSocket.Accept()
+            let requestText = socket.recvAllUtf8 ()
+
+            if isHttpUpgradeWebsocket requestText then
+
+                requestText //send response
+                |> getSecWebSocketKey
+                |> genSecWebSocketAccept
+                |> genResponse
+                |> socket.sendUtf8
+
+                socket
+            else
+                fetchSocket ()
+
+        listenSocket.Dispose()
+
+        new WebSocket(fetchSocket ())
+
     //对于使用其他API，暴露内部socket可能会有用
     member self.socket = socket
 
@@ -89,3 +120,9 @@ type WebSocket internal (socket: Socket) =
                    encodedBytes.[i] ^^^ maskBytes.[i % 4] |]
 
         bytesToUtf8 decodedBytes
+
+    interface IDisposable with
+        member self.Dispose() = socket.Dispose()
+
+    //destructor
+    override self.Finalize() = (self :> IDisposable).Dispose()

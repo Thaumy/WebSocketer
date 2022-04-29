@@ -29,20 +29,15 @@ let listen (port: uint16) f =
                 try
                     let requestText = socket.recvAllUtf8 ()
 
-                    if
-                        requestText.StartsWith("GET")
-                        && requestText.Contains("Upgrade: websocket")
-                    then
+                    if isHttpUpgradeWebsocket requestText then
 
-                        let response =
-                            requestText
-                            |> getSecWebSocketKey
-                            |> genSecWebSocketAccept
-                            |> genResponse
+                        requestText //send response
+                        |> getSecWebSocketKey
+                        |> genSecWebSocketAccept
+                        |> genResponse
+                        |> socket.sendUtf8
 
-                        socket.sendUtf8 response
-
-                        socket |> WebSocket |> f
+                        new WebSocket(socket) |> f
                 with
                 | e ->
                     e.Message |> Console.WriteLine
@@ -68,6 +63,7 @@ let listen (port: uint16) f =
             |> Async.RunSynchronously
 
         Ok()
+
     with
     | e ->
         listenSocket.Dispose()
@@ -107,17 +103,15 @@ let listenWithTimeout (port: uint16) f (timeout: int) =
                     try
                         let requestText: string = socket.recvAllUtf8 ()
 
-                        if requestText.StartsWith("GET") then
+                        if isHttpUpgradeWebsocket requestText then
 
-                            let response =
-                                requestText
-                                |> getSecWebSocketKey
-                                |> genSecWebSocketAccept
-                                |> genResponse
+                            requestText //send response
+                            |> getSecWebSocketKey
+                            |> genSecWebSocketAccept
+                            |> genResponse
+                            |> socket.sendUtf8
 
-                            socket.sendUtf8 response
-
-                            socket |> WebSocket |> f
+                            new WebSocket(socket) |> f
                     with
                     | e ->
                         e.Message |> Console.WriteLine

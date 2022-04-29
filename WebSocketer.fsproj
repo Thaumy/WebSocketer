@@ -8,9 +8,9 @@
 
     <ItemGroup>
         <Compile Include="Util.fs" />
+        <Compile Include="Parser.fs" />
         <Compile Include="Type\Socket.fs" />
         <Compile Include="Type\WebSocket.fs" />
-        <Compile Include="Parser.fs" />
         <Compile Include="Server.fs" />
     </ItemGroup>
 

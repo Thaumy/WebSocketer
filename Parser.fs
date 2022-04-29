@@ -6,6 +6,10 @@ open System.Text
 open System.Text.RegularExpressions
 open System.Security.Cryptography
 
+let isHttpUpgradeWebsocket (requestText: string) =
+    requestText.StartsWith("GET")
+    && requestText.Contains("Upgrade: websocket")
+
 let getSecWebSocketKey requestText =
     (Regex("Sec-WebSocket-Key: (.*)").Match requestText)
         .Groups.[1]
