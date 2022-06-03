@@ -5,6 +5,8 @@ open System.Net
 open System.Net.Sockets
 open System.Threading
 open System.Threading.Channels
+open fsharper.typ
+open fsharper.op.Alias
 open WebSocketer.Type.Socket
 open WebSocketer.Type.WebSocket
 
@@ -12,11 +14,11 @@ open WebSocketer.Type.WebSocket
 /// 闭包 f 生命期结束后其连接会被自动销毁
 /// 此函数会永久性阻塞当前线程
 /// 该函的返回值始终为Error
-let listen (port: uint16) f =
+let listen (port: u16) f =
     let listenSocket =
         new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
 
-    let endPoint = IPEndPoint(IPAddress.Any, int port)
+    let endPoint = IPEndPoint(IPAddress.Any, i32 port)
 
     listenSocket.Bind endPoint
     listenSocket.Listen 1024
@@ -42,7 +44,6 @@ let listen (port: uint16) f =
                 | e ->
                     e.Message |> Console.WriteLine
                     socket.Dispose()
-
             }
             |> Async.Start
 
@@ -55,7 +56,7 @@ let listen (port: uint16) f =
                     socket.Available = 0
                     && socket.Poll(timeout, SelectMode.SelectRead)
 
-                while not <| disConnected () do
+                while not (disConnected ()) do
                     Thread.Sleep span
 
                 socket.Close()
@@ -67,17 +68,20 @@ let listen (port: uint16) f =
     with
     | e ->
         listenSocket.Dispose()
-        Error e
+        Err e
 
 
 /// 带有超时的版本
 /// timeout是单位为毫秒的时间
 /// 每次开始监听时都会进行计时，如果在timeout时间内没有连接产生，函数将返回
-let listenWithTimeout (port: uint16) f (timeout: int) =
+let listenWithTimeout (port: u16) f (timeout: u32) =
+    if timeout > u32 Int32.MaxValue then //防止溢出
+        failwith $"timeout is larger than {Int32.MaxValue}"
+
     let listenSocket =
         new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
 
-    let endPoint = IPEndPoint(IPAddress.Any, int port)
+    let endPoint = IPEndPoint(IPAddress.Any, i32 port)
 
     listenSocket.Bind endPoint
     listenSocket.Listen 1024
@@ -88,14 +92,15 @@ let listenWithTimeout (port: uint16) f (timeout: int) =
             let c = Channel.CreateUnbounded<IAsyncResult>()
 
             let callback =
-                AsyncCallback
-                    (fun ar ->
-                        e.Set() |> ignore
-                        c.Writer.TryWrite(ar) |> ignore)
+                let f ar =
+                    e.Set() |> ignore
+                    c.Writer.TryWrite(ar) |> ignore
+
+                AsyncCallback f
 
             listenSocket.BeginAccept(callback, null) |> ignore
 
-            if e.WaitOne(timeout, false) then
+            if e.WaitOne(i32 timeout, false) then
                 let _, ar = c.Reader.TryRead()
                 let socket = listenSocket.EndAccept(ar)
 
@@ -144,4 +149,4 @@ let listenWithTimeout (port: uint16) f (timeout: int) =
     with
     | e ->
         listenSocket.Dispose()
-        Error e
+        Err e

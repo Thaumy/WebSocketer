@@ -5,21 +5,22 @@ open System
 open System.IO
 open System.Net
 open System.Net.Sockets
-open fsharper.types.Procedure
+open fsharper.op.Alias
+open fsharper.typ.Array
 open WebSocketer
-open WebSocketer.Parser
 open WebSocketer.Type.Socket
 
 
 type WebSocket internal (socket: Socket) =
     /// RAII构造
-    new(port: uint16) =
+    new(port: u16) =
         let listenSocket =
             new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
 
-        let ep = IPEndPoint(IPAddress.Any, int port)
+        (IPAddress.Any, i32 port)
+        |> IPEndPoint
+        |> listenSocket.Bind
 
-        listenSocket.Bind ep
         listenSocket.Listen 1024
 
         let rec fetchSocket () =
@@ -93,7 +94,7 @@ type WebSocket internal (socket: Socket) =
 
         let actualPayLoadLen =
             if payLoadLen < 126uy then
-                uint32 payLoadLen
+                u32 payLoadLen
             elif payLoadLen = 126uy then
 
                 let actualPayLoadBytes = socket.recvBytes 2u
@@ -116,7 +117,7 @@ type WebSocket internal (socket: Socket) =
         let encodedBytes = socket.recvBytes actualPayLoadLen
 
         let decodedBytes =
-            [| for i = 0 to int (actualPayLoadLen - 1u) do
+            [| for i = 0 to i32 (actualPayLoadLen - 1u) do
                    encodedBytes.[i] ^^^ maskBytes.[i % 4] |]
 
         bytesToUtf8 decodedBytes
