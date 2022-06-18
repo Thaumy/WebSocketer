@@ -7,8 +7,7 @@ open System.Threading
 open System.Threading.Channels
 open fsharper.typ
 open fsharper.op.Alias
-open WebSocketer.Type.Socket
-open WebSocketer.Type.WebSocket
+open WebSocketer.typ
 
 /// 持续监听本机指定端口的tcp连接
 /// 闭包 f 生命期结束后其连接会被自动销毁

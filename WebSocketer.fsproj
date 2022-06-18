@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Util.fs" />
-        <Compile Include="Parser.fs" />
-        <Compile Include="Type\Socket.fs" />
-        <Compile Include="Type\WebSocket.fs" />
+        <Compile Include="fn.fs" />
+        <Compile Include="typ\Socket.fs" />
+        <Compile Include="typ\NetworkStream.fs" />
+        <Compile Include="typ\WebSocket.fs" />
         <Compile Include="Server.fs" />
     </ItemGroup>
 
