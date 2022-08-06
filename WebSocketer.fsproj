@@ -20,4 +20,8 @@
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="6.0.5" />
+    </ItemGroup>
+
 </Project>

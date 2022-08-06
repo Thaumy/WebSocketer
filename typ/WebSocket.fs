@@ -3,7 +3,7 @@ namespace WebSocketer.typ
 open System
 open System.IO
 open System.Net.Sockets
-open fsharper.op.Alias
+open fsharper.alias
 open fsharper.typ.Array
 open WebSocketer
 

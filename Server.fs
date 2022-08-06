@@ -6,7 +6,7 @@ open System.Net.Sockets
 open System.Threading
 open System.Threading.Channels
 open fsharper.typ
-open fsharper.op.Alias
+open fsharper.alias
 open WebSocketer.typ
 
 /// 持续监听本机指定端口的tcp连接
